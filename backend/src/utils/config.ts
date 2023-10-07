@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import path from 'path';
-
+import { handleInstanceError } from './helper';
 let config: Record<string, any> = {};
 
 const configPath = path.join(__dirname, '../../config.json')
@@ -9,8 +9,11 @@ const configPath = path.join(__dirname, '../../config.json')
 try {
     const configFileContent = fs.readFileSync(configPath, 'utf8');
     config = JSON.parse(configFileContent);
-} catch (err: unknown) {
-    console.error(`Error reading or parsing config.json: ${(err as Error).message}`);
+} catch (error) {
+    handleInstanceError(error, Error, (error) => {
+        console.error(`Error reading or parsing config.json: ${error.message}`);
+    })
+
     process.exit(1);
 }
 
@@ -21,8 +24,10 @@ fs.watchFile(configPath, (curr, prev) => {
             const configFileContent = fs.readFileSync('config.json', 'utf8');
             config = JSON.parse(configFileContent);
             console.log('Configuration reloaded');
-        } catch (err: unknown) {
-            console.error(`Error reading or parsing config.json: ${(err as Error).message}`);
+        } catch (error) {
+            handleInstanceError(error, Error, (error) => {
+                console.error(`Error reading or parsing config.json: ${error.message}`);
+            })
         }
     }
 });

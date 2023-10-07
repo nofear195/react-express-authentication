@@ -10,6 +10,7 @@ const sequelize = new Sequelize({
     username: config.MYSQL_USER,
     password: config.MYSQL_PASSWORD,
     models: [path.join(__dirname, '../models/*.ts')],
+    repositoryMode: true
 })
 
 export default sequelize;
