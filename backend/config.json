@@ -1,0 +1,14 @@
+{
+    "JWT_SECRET":"example",
+    "SERVER_HOST": "localhost",
+    "SERVER_PORT": 3000,
+  
+    "MYSQL_HOST": "your host",
+    "MYSQL_PORT": 3306,
+    "MYSQL_DATABASE": "local",
+    "MYSQL_USER": "root",
+    "MYSQL_PASSWORD": "password"
+    
+  
+  }
+  
