@@ -12,7 +12,7 @@
     }
   ],
   "paths": {
-    "/users/signup": {
+    "/user/signup": {
       "post": {
         "description": "",
         "responses": {
@@ -39,7 +39,7 @@
         }
       }
     },
-    "/users/login": {
+    "/user/login": {
       "post": {
         "description": "",
         "responses": {
@@ -66,7 +66,36 @@
         }
       }
     },
-    "/users/": {
+    "/user/verfiy-email": {
+      "put": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "verificationString": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/": {
       "get": {
         "description": "",
         "responses": {

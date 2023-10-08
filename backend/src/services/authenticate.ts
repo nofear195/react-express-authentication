@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import config from '../utils/config';
-import { sendResponse } from '../utils/helper';
+import { handleInstanceError, sendResponse } from '../utils/helper';
 
 // List of routes that do not require a Bearer token
-const excludedRoutes: string[] = ['/api/users/login', '/api/users/signup'];
+const excludedRoutes: string[] = ['/api/user/login', '/api/user/signup'];
 
-function authenticateToken(req: Request, res: Response, next: NextFunction) {
+function authenticateToken(req: Request, res: Response, next: NextFunction): void {
   // Get the requested route path
   const routePath: string = req.path;
 
@@ -27,4 +27,22 @@ function authenticateToken(req: Request, res: Response, next: NextFunction) {
   });
 }
 
-export { authenticateToken };
+interface JwtPayload {
+  id: number;
+  email: string;
+  isVerified: boolean;
+}
+
+function signJwt(res: Response, payload: JwtPayload): void {
+  try {
+    const token = jwt.sign(payload, config.JWT_SECRET, { expiresIn: '2d' });
+    return sendResponse(res, { data: token });
+  } catch (error) {
+    handleInstanceError(error, Error, (error) => {
+      console.error(error.message);
+      return sendResponse(res, { code: 500, message: error.message });
+    });
+  }
+}
+
+export { authenticateToken, signJwt };

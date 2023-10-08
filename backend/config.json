@@ -3,9 +3,12 @@
 
   "SERVER_PORT": 3000,
 
-  "MYSQL_HOST": "db host",
-  "MYSQL_PORT": 3306,
-  "MYSQL_DATABASE": "local",
-  "MYSQL_USER": "root",
-  "MYSQL_PASSWORD": "password"
+  "DB_HOST": "db host",
+  "DB_PORT": 3306,
+  "DB_DATABASE": "local",
+  "DB_USER": "root",
+  "DB_PASSWORD": "password",
+
+  "MAILER_AUTH_USER":"",
+  "MAILER_AUTH_PASSWORD": ""
 }

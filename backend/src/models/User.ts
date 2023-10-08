@@ -33,7 +33,10 @@ export class User extends Model<User> {
   @Column({
     field: 'is_verified',
   })
-  isVerified: boolean = false;
+  isVerified!: boolean;
+
+  @Column
+  verificationString!:string;
 
   @CreatedAt
   @Column({
