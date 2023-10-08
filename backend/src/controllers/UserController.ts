@@ -77,6 +77,9 @@ const login = async (req: Request, res: Response) => {
 };
 
 const getAllUsers = async (req: Request, res: Response) => {
+    /* #swagger.security = [{
+            "bearerAuth": []
+    }] */
   try {
     const users = await userRepository.findAll();
     sendResponse(res, { data: users });

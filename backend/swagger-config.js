@@ -1,16 +1,28 @@
-const swaggerAutogen = require('swagger-autogen')();
+const swaggerAutogen = require('swagger-autogen')({ openapi: '3.0.0' });
 
 const outputFile = './swagger-output.json'; // Output JSON file
 const endpointsFiles = ['src/routes/index.ts']; // Array of route files
 
 const doc = {
   info: {
-    title: 'Your API',
-    description: 'Your API description',
+    title: 'Backend API',
+    description: 'Backend API',
     version: '1.0.0',
   },
-  host: 'localhost:3000', // Set your server host and port
-  basePath: '/api',
+  servers: [
+    {
+      url: "/api",
+      description: 'Development server',
+    },
+  ],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+      },
+    },
+  },
 };
 
 swaggerAutogen(outputFile, endpointsFiles, doc);
