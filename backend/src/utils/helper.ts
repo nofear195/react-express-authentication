@@ -8,16 +8,16 @@ function sendResponse(
   res.status(code).json({ code, message, data });
 }
 
-function handleInstanceError<T extends Error>(
-  error: any,
-  errorType: { new (): T },
-  errorHandler: (error: T) => void,
-) {
-  if (error instanceof errorType) {
-    errorHandler(error);
+
+function handleAndConvertError(error: any): string {
+  if (error instanceof Error) {
+    console.error('An expected error occurred:', error.message);
+    return error.message;
   } else {
-    console.error('An unexpected error occurred:', error);
+    const errorMessage = error ? error.toString() : 'Unknown error'; 
+    console.error('An unexpected error occurred:', errorMessage);
+    return errorMessage; // Return the error message as a string
   }
 }
 
-export { sendResponse, handleInstanceError };
+export { sendResponse, handleAndConvertError };

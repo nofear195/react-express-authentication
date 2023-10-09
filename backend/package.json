@@ -10,7 +10,7 @@
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
-    "generate-swagger": "node ./swagger-config.js"
+    "swagger-autogen": "node ./swagger-config.js"
   },
   "keywords": [],
   "author": "",

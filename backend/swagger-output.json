@@ -11,9 +11,36 @@
       "description": "Development server"
     }
   ],
+  "tags": [
+    {
+      "name": "User",
+      "description": "user api"
+    }
+  ],
   "paths": {
+    "/user/users": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/user/signup": {
       "post": {
+        "tags": [
+          "User"
+        ],
         "description": "",
         "responses": {
           "default": {
@@ -41,6 +68,9 @@
     },
     "/user/login": {
       "post": {
+        "tags": [
+          "User"
+        ],
         "description": "",
         "responses": {
           "default": {
@@ -68,6 +98,9 @@
     },
     "/user/verfiy-email": {
       "put": {
+        "tags": [
+          "User"
+        ],
         "description": "",
         "responses": {
           "default": {
@@ -95,19 +128,61 @@
         }
       }
     },
-    "/user/": {
-      "get": {
+    "/user/forgot-password": {
+      "put": {
+        "tags": [
+          "User"
+        ],
         "description": "",
         "responses": {
-          "500": {
-            "description": "Internal Server Error"
+          "default": {
+            "description": ""
           }
         },
-        "security": [
-          {
-            "bearerAuth": []
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
           }
-        ]
+        }
+      }
+    },
+    "/user/reset-password": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "passwordResetCode": {
+                    "example": "any"
+                  },
+                  "newPassword": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

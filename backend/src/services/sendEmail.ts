@@ -43,4 +43,28 @@ const sendVerifyEmail = async (
     return error;
   }
 };
-export { sendEmail, sendVerifyEmail };
+
+const sendResetPasswordEmail = async (
+  targetMail: string,
+  redirectUrl: string,
+  verificationString: string,
+): Promise<SentMessageInfo | Error> => {
+  const message: SendMailOptions = {
+    from: config.MAILER_AUTH_USER,
+    to: targetMail,
+    subject: 'Password Reset',
+    text: `
+        To reset your email, click here:
+        ${redirectUrl}/${verificationString}
+    `,
+  };
+
+  try {
+    const info: SentMessageInfo = await sendEmail(message);
+    return info;
+  } catch (error) {
+    return error;
+  }
+};
+
+export { sendEmail, sendVerifyEmail, sendResetPasswordEmail };

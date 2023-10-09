@@ -11,8 +11,14 @@ const doc = {
   },
   servers: [
     {
-      url: "/api",
+      url: '/api',
       description: 'Development server',
+    },
+  ],
+  tags: [
+    {
+      name: 'User',
+      description: 'user api',
     },
   ],
   components: {
