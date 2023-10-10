@@ -1,14 +1,14 @@
 import { Sequelize } from 'sequelize-typescript';
 import path from 'path';
-import config from '../utils/config';
+import {envConfig} from '../utils/config';
 
 const sequelize = new Sequelize({
-  host: config.DB_HOST,
-  port: config.DB_PORT,
+  host: envConfig.DB_HOST,
+  port: envConfig.DB_PORT,
   dialect: 'mysql', // mysql (default), postgres, sqlite, mariadb and mssql
-  database: config.DB_DATABASE,
-  username: config.DB_USER,
-  password: config.DB_PASSWORD,
+  database: envConfig.DB_DATABASE,
+  username: envConfig.DB_USER,
+  password: envConfig.DB_PASSWORD,
   models: [path.join(__dirname, '../models/*.ts')],
 });
 

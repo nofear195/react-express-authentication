@@ -7,6 +7,8 @@ import { sendResponse, handleAndConvertError } from '../utils/helper';
 import { sendVerifyEmail, sendResetPasswordEmail } from '../services/sendEmail';
 import { signJwt } from '../services/authenticate';
 
+const redirectUrl = 'http://localhost:3000';
+
 const getAllUsers = async (req: Request, res: Response) => {
   // #swagger.tags = ['User']
   /* #swagger.security = [{
@@ -27,7 +29,6 @@ const signUp = async (req: Request, res: Response) => {
 
   const passwordHash = await bcrypt.hash(password, 10);
   const verificationString = uuid();
-  const redirectUrl = 'http://localhost:3000';
 
   try {
     const user = await User.findOne({ where: { email } });
@@ -47,6 +48,7 @@ const signUp = async (req: Request, res: Response) => {
       email,
       isVerified,
     });
+    if (token instanceof Error) throw token;
 
     sendResponse(res, { data: token });
   } catch (error) {
@@ -73,6 +75,7 @@ const login = async (req: Request, res: Response) => {
       email,
       isVerified,
     });
+    if (token instanceof Error) throw token;
 
     sendResponse(res, { data: token });
   } catch (error) {
@@ -100,6 +103,8 @@ const verifyEmail = async (req: Request, res: Response) => {
     if (result[0] === 0) throw new Error('database update user verified error');
 
     const token = signJwt({ id, email, isVerified: true });
+    if (token instanceof Error) throw token;
+    
     sendResponse(res, { data: token });
   } catch (error) {
     const message = handleAndConvertError(error);
@@ -111,7 +116,6 @@ const forgotPassword = async (req: Request, res: Response) => {
   // #swagger.tags = ['User']
   const { email } = req.body;
   const verificationString = uuid();
-  const redirectUrl = 'http://localhost:3000';
 
   try {
     const result = await User.update({ verificationString }, { where: { email } });

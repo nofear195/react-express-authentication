@@ -20,11 +20,16 @@ export class User extends Model<User> {
   @Column
   id!: number;
 
+  @Column
+  name!: string;
+
+  @Column
+  picture!: string;
+
   @AllowNull(false)
   @Column
   email!: string;
 
-  @AllowNull(false)
   @Column
   password!: string;
 
@@ -36,7 +41,7 @@ export class User extends Model<User> {
   isVerified!: boolean;
 
   @Column
-  verificationString!:string;
+  verificationString!: string;
 
   @CreatedAt
   @Column({

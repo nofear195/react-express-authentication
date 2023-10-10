@@ -1,5 +1,5 @@
 import { createTransport, SendMailOptions, SentMessageInfo } from 'nodemailer';
-import config from '../utils/config';
+import {envConfig} from '../utils/config';
 
 // Create Nodemailer transporter
 const transporter = createTransport({
@@ -7,8 +7,8 @@ const transporter = createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: config.MAILER_AUTH_USER,
-    pass: config.MAILER_AUTH_PASSWORD,
+    user: envConfig.MAILER_AUTH_USER,
+    pass: envConfig.MAILER_AUTH_PASSWORD,
   },
 });
 
@@ -27,7 +27,7 @@ const sendVerifyEmail = async (
   verificationString: string,
 ): Promise<SentMessageInfo | Error> => {
   const message: SendMailOptions = {
-    from: config.MAILER_AUTH_USER,
+    from: envConfig.MAILER_AUTH_USER,
     to: targetMail,
     subject: 'Please verify your email',
     text: `
@@ -50,7 +50,7 @@ const sendResetPasswordEmail = async (
   verificationString: string,
 ): Promise<SentMessageInfo | Error> => {
   const message: SendMailOptions = {
-    from: config.MAILER_AUTH_USER,
+    from: envConfig.MAILER_AUTH_USER,
     to: targetMail,
     subject: 'Password Reset',
     text: `

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import config from '../utils/config';
+import {envConfig} from '../utils/config';
 import { sendResponse } from '../utils/helper';
 
 // List of routes that do not require a Bearer token
@@ -9,6 +9,8 @@ const excludedRoutes: string[] = [
   '/api/user/signup',
   '/api/user/forgot-password',
   '/api/user/reset-password',
+  '/api/oauth/google/auth-url',
+  '/api/oauth/google/callback',
 ];
 
 function authenticateToken(req: Request, res: Response, next: NextFunction): void {
@@ -24,7 +26,7 @@ function authenticateToken(req: Request, res: Response, next: NextFunction): voi
     return sendResponse(res, { code: 401, message: 'unable to verify token' });
 
   const token: string = authorization.split(' ')[1] || '';
-  const secretKey: string = config.JWT_SECRET;
+  const secretKey: string = envConfig.JWT_SECRET;
 
   jwt.verify(token, secretKey, async (error: Error | null, decoded: any) => {
     if (error) return sendResponse(res, { code: 401, message: 'unable to verify token' });
@@ -40,7 +42,7 @@ interface JwtPayload {
 
 function signJwt(payload: JwtPayload): string | Error {
   try {
-    const token = jwt.sign(payload, config.JWT_SECRET, { expiresIn: '2d' });
+    const token = jwt.sign(payload, envConfig.JWT_SECRET, { expiresIn: '2d' });
     return token;
   } catch (error) {
     return error as Error;

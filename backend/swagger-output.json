@@ -14,7 +14,11 @@
   "tags": [
     {
       "name": "User",
-      "description": "user api"
+      "description": "user api with JWT implementation"
+    },
+    {
+      "name": "Oauth2",
+      "description": "Oauth2 implementation"
     }
   ],
   "paths": {
@@ -181,6 +185,19 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/oauth/google/auth-url": {
+      "get": {
+        "tags": [
+          "Oauth2"
+        ],
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
           }
         }
       }

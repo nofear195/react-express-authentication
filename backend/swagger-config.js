@@ -18,7 +18,11 @@ const doc = {
   tags: [
     {
       name: 'User',
-      description: 'user api',
+      description: 'user api with JWT implementation',
+    },
+    {
+      name: 'Oauth2',
+      description: 'Oauth2 implementation',
     },
   ],
   components: {

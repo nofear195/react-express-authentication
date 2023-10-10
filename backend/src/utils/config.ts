@@ -1,31 +1,21 @@
-import * as fs from 'fs';
+import { readFileSync } from 'fs';
 import path from 'path';
 import { handleAndConvertError } from './helper';
-let config: Record<string, any> = {};
 
-const configPath = path.join(__dirname, '../../config.json');
-
-// Load initial configuration
-try {
-  const configFileContent = fs.readFileSync(configPath, 'utf8');
-  config = JSON.parse(configFileContent);
-} catch (error) {
-  handleAndConvertError(error);
-  process.exit(1);
+// Define a function to load JSON data from a file
+function loadJSON(filePath: string) {
+  try {
+    const configFileContent = readFileSync(filePath, 'utf8');
+    return JSON.parse(configFileContent);
+  } catch (error) {
+    handleAndConvertError(error);
+  }
 }
 
-// Watch for changes in the config.json file
-fs.watchFile(configPath, (curr, prev) => {
-  if (curr.mtime !== prev.mtime) {
-    try {
-      const configFileContent = fs.readFileSync('config.json', 'utf8');
-      config = JSON.parse(configFileContent);
-      console.log('Configuration reloaded');
-    } catch (error) {
-      handleAndConvertError(error);
-    }
-  }
-});
+const envConfigPath = path.join(__dirname, '../../env-config.json');
+const envConfig = loadJSON(envConfigPath);
 
-// Export the configuration object
-export default config;
+const googleOauthPath = path.join(__dirname, '../../google.oauth2.keys.json');
+const googoleOauth2Keys = loadJSON(googleOauthPath);
+
+export { envConfig, googoleOauth2Keys };
