@@ -17,3 +17,6 @@ logs/
 
 # OAuth2 configuration from the Google
 google.oauth2.keys.json
+
+# AWS cognito
+aws.cognito.json

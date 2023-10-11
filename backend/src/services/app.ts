@@ -6,7 +6,7 @@ import routes from '../routes';
 import sequelize from '../services/database';
 import swaggerUi from 'swagger-ui-express';
 import swaggerOutput from '../../swagger-output.json';
-import { authenticateToken } from './authenticate';
+import { authenticateToken } from '../utils/authenticate';
 import { handleAndConvertError } from '../utils/helper';
 
 // Initialize Sequelize
@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerOutput));
 
 // Apply the authentication middleware to all routes
-app.use(authenticateToken);
+// app.use(authenticateToken);
 
 // API routes
 app.use('/api', routes);

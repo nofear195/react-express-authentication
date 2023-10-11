@@ -1,19 +1,20 @@
 import express from 'express';
+
 import {
-  getAllUsers,
   signUp,
-  login,
+  logIn,
   verifyEmail,
   forgotPassword,
   resetPassword,
-} from '../controllers/UserController';
+} from '../controllers/CognitoController';
+
+import { authenticateToken } from '../utils/authenticate';
 
 const router = express.Router();
 
-router.get('/users', getAllUsers);
 router.post('/signup', signUp);
-router.post('/login', login);
-router.put('/verfiy-email', verifyEmail);
+router.post('/login', logIn);
+router.put('/verfiy-email', authenticateToken, verifyEmail);
 router.put('/forgot-password', forgotPassword);
 router.put('/reset-password', resetPassword);
 

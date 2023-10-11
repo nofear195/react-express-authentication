@@ -1,5 +1,5 @@
 import { createTransport, SendMailOptions, SentMessageInfo } from 'nodemailer';
-import {envConfig} from '../utils/config';
+import { envConfig } from './config';
 
 // Create Nodemailer transporter
 const transporter = createTransport({

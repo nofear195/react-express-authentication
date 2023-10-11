@@ -21,6 +21,10 @@ const doc = {
       description: 'user api with JWT implementation',
     },
     {
+      name: 'Amazon Cognito Identity',
+      description: 'Amazon Cognito Identity implementation',
+    },
+    {
       name: 'Oauth2',
       description: 'Oauth2 implementation',
     },

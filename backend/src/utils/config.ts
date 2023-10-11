@@ -18,4 +18,7 @@ const envConfig = loadJSON(envConfigPath);
 const googleOauthPath = path.join(__dirname, '../../google.oauth2.keys.json');
 const googoleOauth2Keys = loadJSON(googleOauthPath);
 
-export { envConfig, googoleOauth2Keys };
+const awsCognitoPath = path.join(__dirname, '../../aws.cognito.json');
+const awsCognitoConfig = loadJSON(awsCognitoPath);
+
+export { envConfig, googoleOauth2Keys, awsCognitoConfig };

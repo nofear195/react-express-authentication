@@ -4,8 +4,8 @@ import { v4 as uuid } from 'uuid';
 
 import { User } from '../models/User';
 import { sendResponse, handleAndConvertError } from '../utils/helper';
-import { sendVerifyEmail, sendResetPasswordEmail } from '../services/sendEmail';
-import { signJwt } from '../services/authenticate';
+import { sendVerifyEmail, sendResetPasswordEmail } from '../utils/sendEmail';
+import { signJwt } from '../utils/authenticate';
 
 const redirectUrl = 'http://localhost:3000';
 
@@ -57,7 +57,7 @@ const signUp = async (req: Request, res: Response) => {
   }
 };
 
-const login = async (req: Request, res: Response) => {
+const logIn = async (req: Request, res: Response) => {
   // #swagger.tags = ['User']
   const { email, password } = req.body;
 
@@ -104,7 +104,7 @@ const verifyEmail = async (req: Request, res: Response) => {
 
     const token = signJwt({ id, email, isVerified: true });
     if (token instanceof Error) throw token;
-    
+
     sendResponse(res, { data: token });
   } catch (error) {
     const message = handleAndConvertError(error);
@@ -150,4 +150,4 @@ const resetPassword = async (req: Request, res: Response) => {
   }
 };
 
-export { getAllUsers, signUp, login, verifyEmail, forgotPassword, resetPassword };
+export { getAllUsers, signUp, logIn, verifyEmail, forgotPassword, resetPassword };

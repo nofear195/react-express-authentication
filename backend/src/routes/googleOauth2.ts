@@ -3,7 +3,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { googoleOauth2Keys as keys } from '../utils/config';
 import { handleAndConvertError, sendResponse } from '../utils/helper';
 import { User } from '../models/User';
-import { signJwt } from '../services/authenticate';
+import { signJwt } from '../utils/authenticate';
 
 const redirectUrl = 'http://localhost:3000';
 
