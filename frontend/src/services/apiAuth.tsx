@@ -1,8 +1,16 @@
-import { postData, authToken } from "./axiosAPI";
+import { postData, fetchData } from "./axiosAPI";
 
 interface User {
   email: RegExp;
   password: string;
+}
+
+class Info {
+  id!: number;
+  name!: string | null;
+  picture!: string | null;
+  email!: string;
+  is_verified!: number;
 }
 
 export async function signup(user: User) {
@@ -12,7 +20,7 @@ export async function signup(user: User) {
     const { data, error } = response;
     if (error !== null) throw new Error(error);
 
-    authToken("add", data as string);
+    localStorage.setItem("jwtToken", data as string);
   } catch (error) {
     console.error(error);
   }
@@ -25,26 +33,30 @@ export async function login(user: User) {
     const { data, error } = response;
     if (error !== null) throw new Error(error);
 
-    authToken("add", data as string);
+    localStorage.setItem("jwtToken", data as string);
+    return getCurrentUser();
   } catch (error) {
     console.error(error);
   }
 }
 
 export async function logout() {
-  authToken("remove");
+  localStorage.removeItem("jwtToken");
 }
 
 export async function getCurrentUser() {
-  //   const { data: session } = await supabase.auth.getSession();
-  //   if (!session.session) return null;
+  try {
+    const response = await fetchData("/user/user");
 
-  //   const { data, error } = await supabase.auth.getUser();
+    const { data, error } = response;
+    if (error !== null) throw new Error(error);
 
-  //   if (error) throw new Error(error.message);
+    return data as Info;
+  } catch (error) {
+    console.error(error);
 
-  //   return data?.user;
-  return "tst";
+    return new Info();
+  }
 }
 
 // export async function updateCurrentUser({ password, fullName, avatar }) {

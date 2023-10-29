@@ -7,14 +7,14 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
 
   // 1. Load the authenticated user
-  const { isLoading, isAuthenticated } = useUser();
+  const { isLoading, isVerified } = useUser();
 
   // 2. If there is NO authenticated user, redirect to the /login
   useEffect(
     function () {
-      if (!isAuthenticated && !isLoading) navigate("/login");
+      if (!isVerified && !isLoading) navigate("/login");
     },
-    [isAuthenticated, isLoading, navigate],
+    [isVerified, isLoading, navigate],
   );
 
   // 3. While loading, show a spinner
@@ -25,7 +25,7 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
       </div>
     );
   // 4. If there IS a user, render the app
-  if (isAuthenticated) return children;
+  if (isVerified) return children;
 }
 
 export default ProtectedRoute;

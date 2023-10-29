@@ -32,15 +32,24 @@
           "User"
         ],
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
+        "responses": {
+          "default": {
+            "description": ""
           }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/user/user": {
+      "get": {
+        "tags": [
+          "User"
         ],
+        "description": "",
         "responses": {
           "default": {
             "description": ""
@@ -119,15 +128,6 @@
           "User"
         ],
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "default": {
             "description": ""
@@ -280,15 +280,6 @@
           "Amazon Cognito Identity"
         ],
         "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "default": {
             "description": ""

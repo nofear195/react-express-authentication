@@ -21,28 +21,14 @@ const api: AxiosInstance = axios.create({
   baseURL: "http://localhost:3000/api",
 });
 
-export function authToken(action: string, token?: string) {
-  const tokenName = "token";
-
-  switch (action) {
-    case "get":
-      return localStorage.getItem(tokenName) ?? undefined;
-    case "add":
-      if (!token) return;
-      localStorage.setItem(tokenName, token);
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      break;
-    case "remove":
-      localStorage.removeItem(tokenName);
-      delete api.defaults.headers.common["Authorization"];
-      break;
-    default:
-      break;
-  }
+function setAuthToken() {
+  const token = localStorage.getItem("jwtToken");
+  if (token) api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 }
 
 // Define a function to fetch data with GET request
 export async function fetchData(endpoint: string): Promise<apiResult> {
+  setAuthToken();
   const result = new apiResult();
   try {
     const response: AxiosResponse<responseData> = await api.get(endpoint);
@@ -65,6 +51,7 @@ export async function postData<T>(
   endpoint: string,
   data: T,
 ): Promise<apiResult> {
+  setAuthToken();
   const result = new apiResult();
   try {
     const response: AxiosResponse<responseData> = await api.post(
@@ -90,6 +77,7 @@ export async function updateData<T>(
   endpoint: string,
   data: T,
 ): Promise<apiResult> {
+  setAuthToken();
   const result = new apiResult();
   try {
     const response: AxiosResponse<responseData> = await api.put(endpoint, data);
@@ -109,6 +97,7 @@ export async function updateData<T>(
 
 // Define a function to delete data with DELETE request
 export async function deleteData(endpoint: string): Promise<apiResult> {
+  setAuthToken();
   const result = new apiResult();
   try {
     const response: AxiosResponse<responseData> = await api.delete(endpoint);
@@ -125,3 +114,5 @@ export async function deleteData(endpoint: string): Promise<apiResult> {
     return result;
   }
 }
+
+

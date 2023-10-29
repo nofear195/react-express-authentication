@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { User } from '../models/User';
 import { sendResponse, handleAndConvertError } from '../utils/helper';
 import { sendVerifyEmail, sendResetPasswordEmail } from '../utils/sendEmail';
-import { signJwt } from '../utils/authenticate';
+import { signJwt, parseJwtToken, JwtPayload } from '../utils/authenticate';
 
 const redirectUrl = 'http://localhost:3000';
 
@@ -17,6 +17,27 @@ const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.findAll();
     sendResponse(res, { data: users });
+  } catch (error) {
+    const message = handleAndConvertError(error);
+    sendResponse(res, { code: 500, message });
+  }
+};
+
+const getUser = async (req: Request, res: Response) => {
+  // #swagger.tags = ['User']
+  /* #swagger.security = [{
+            "bearerAuth": []
+    }] */
+  try {
+    const jwtPayload = parseJwtToken(req);
+    if (jwtPayload instanceof Error) throw jwtPayload;
+
+    const { id } = jwtPayload;
+    const user = await User.findOne({
+      where: { id },
+      attributes: ['id', 'name', 'picture', 'email', 'is_verified'],
+    });
+    sendResponse(res, { data: user });
   } catch (error) {
     const message = handleAndConvertError(error);
     sendResponse(res, { code: 500, message });
@@ -150,4 +171,4 @@ const resetPassword = async (req: Request, res: Response) => {
   }
 };
 
-export { getAllUsers, signUp, logIn, verifyEmail, forgotPassword, resetPassword };
+export { getAllUsers, getUser, signUp, logIn, verifyEmail, forgotPassword, resetPassword };
