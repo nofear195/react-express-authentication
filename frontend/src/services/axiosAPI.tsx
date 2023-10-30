@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { handleAndConvertError } from "../utils/helper";
 
 interface responseData {
@@ -7,7 +7,7 @@ interface responseData {
   data: unknown;
 }
 
-export class apiResult {
+class ApiResult {
   data: unknown | null;
   error: string | null;
   constructor() {
@@ -16,103 +16,65 @@ export class apiResult {
   }
 }
 
-// Create an Axios instance with a base URL
-const api: AxiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api",
-});
+export default class AxiosApi {
+  private api: AxiosInstance;
 
-function setAuthToken() {
-  const token = localStorage.getItem("jwtToken");
-  if (token) api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-}
+  constructor(baseURL: string) {
+    this.api = axios.create({ baseURL });
+  }
 
-// Define a function to fetch data with GET request
-export async function fetchData(endpoint: string): Promise<apiResult> {
-  setAuthToken();
-  const result = new apiResult();
-  try {
-    const response: AxiosResponse<responseData> = await api.get(endpoint);
-    if (response.status >= 300 || response.status < 200)
-      throw new Error(response.statusText);
+  private setAuthToken() {
+    const token = localStorage.getItem("jwtToken");
+    if (token)
+      this.api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }
 
-    const { code, message, data: resData } = response.data;
-    if (code >= 300 && code < 200) throw new Error(message);
+  private async sendRequest<T extends AxiosRequestConfig<T>>(
+    endpoint: string,
+    data: T | null,
+    method: "get" | "post" | "put" | "delete",
+  ): Promise<ApiResult> {
+    const result = new ApiResult();
+    this.setAuthToken();
 
-    result.data = resData;
-    return result;
-  } catch (error) {
-    result.error = handleAndConvertError(error);
+    try {
+      let response: AxiosResponse<responseData>;
+
+      if (method === "get" || method === "delete") {
+        response = await this.api[method](endpoint);
+      } else {
+        response = await this.api[method](endpoint, data);
+      }
+
+      if (response.status >= 300 || response.status < 200)
+        throw new Error(response.statusText);
+
+      const { code, message, data: resData } = response.data;
+      if (code >= 300 && code < 200) throw new Error(message);
+
+      result.data = resData;
+    } catch (error) {
+      result.error = handleAndConvertError(error);
+    }
+
     return result;
   }
-}
 
-// Define a function to send data with POST request
-export async function postData<T>(
-  endpoint: string,
-  data: T,
-): Promise<apiResult> {
-  setAuthToken();
-  const result = new apiResult();
-  try {
-    const response: AxiosResponse<responseData> = await api.post(
-      endpoint,
-      data,
-    );
-    if (response.status >= 300 || response.status < 200)
-      throw new Error(response.statusText);
+  public async fetchData(endpoint: string): Promise<ApiResult> {
+    return this.sendRequest(endpoint, null, "get");
+  }
 
-    const { code, message, data: resData } = response.data;
-    if (code >= 300 && code < 200) throw new Error(message);
+  public async postData<T>(endpoint: string, data: T): Promise<ApiResult> {
+    if (!data) return new ApiResult();
+    return this.sendRequest(endpoint, data, "post");
+  }
 
-    result.data = resData;
-    return result;
-  } catch (error) {
-    result.error = handleAndConvertError(error);
-    return result;
+  public async updateData<T>(endpoint: string, data: T): Promise<ApiResult> {
+    if (!data) return new ApiResult();
+    return this.sendRequest(endpoint, data, "put");
+  }
+
+  public async deleteData(endpoint: string): Promise<ApiResult> {
+    return this.sendRequest(endpoint, null, "delete");
   }
 }
-
-// Define a function to update data with PUT request
-export async function updateData<T>(
-  endpoint: string,
-  data: T,
-): Promise<apiResult> {
-  setAuthToken();
-  const result = new apiResult();
-  try {
-    const response: AxiosResponse<responseData> = await api.put(endpoint, data);
-    if (response.status >= 300 || response.status < 200)
-      throw new Error(response.statusText);
-
-    const { code, message, data: resData } = response.data;
-    if (code >= 300 && code < 200) throw new Error(message);
-
-    result.data = resData;
-    return result;
-  } catch (error) {
-    result.error = handleAndConvertError(error);
-    return result;
-  }
-}
-
-// Define a function to delete data with DELETE request
-export async function deleteData(endpoint: string): Promise<apiResult> {
-  setAuthToken();
-  const result = new apiResult();
-  try {
-    const response: AxiosResponse<responseData> = await api.delete(endpoint);
-    if (response.status >= 300 || response.status < 200)
-      throw new Error(response.statusText);
-
-    const { code, message, data: resData } = response.data;
-    if (code >= 300 && code < 200) throw new Error(message);
-
-    result.data = resData;
-    return result;
-  } catch (error) {
-    result.error = handleAndConvertError(error);
-    return result;
-  }
-}
-
-

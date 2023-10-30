@@ -1,4 +1,5 @@
-import { postData, fetchData } from "./axiosAPI";
+import AxiosApi from "./axiosAPI";
+const baseURL = "http://localhost:3000/api";
 
 interface User {
   email: RegExp;
@@ -13,9 +14,11 @@ class Info {
   is_verified!: number;
 }
 
+const api = new AxiosApi(baseURL);
+
 export async function signup(user: User) {
   try {
-    const response = await postData<User>("/user/signup", user);
+    const response = await api.postData<User>("/user/signup", user);
 
     const { data, error } = response;
     if (error !== null) throw new Error(error);
@@ -28,7 +31,7 @@ export async function signup(user: User) {
 
 export async function login(user: User) {
   try {
-    const response = await postData<User>("/user/login", user);
+    const response = await api.postData<User>("/user/login", user);
 
     const { data, error } = response;
     if (error !== null) throw new Error(error);
@@ -46,7 +49,7 @@ export async function logout() {
 
 export async function getCurrentUser() {
   try {
-    const response = await fetchData("/user/user");
+    const response = await api.fetchData("/user/user");
 
     const { data, error } = response;
     if (error !== null) throw new Error(error);
