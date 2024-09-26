@@ -83,7 +83,6 @@ const verifyEmail = async (req: Request, res: Response) => {
 const logIn = async (req: Request, res: Response) => {
   // #swagger.tags = ['Amazon Cognito Identity']
   const { email, password } = req.body;
-  console.log(email, password);
 
   const command = new InitiateAuthCommand({
     AuthFlow: 'USER_PASSWORD_AUTH',
