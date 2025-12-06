@@ -15,15 +15,30 @@ const scopes = [
 // Define API endpoints for userinfo data
 const userInfoEndpoint = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json';
 
-const oAuth2Client = new OAuth2Client(
-  keys.web.client_id,
-  keys.web.client_secret,
-  keys.web.redirect_uris[0],
-);
+const oAuthConfig = keys?.web;
+const hasOAuthConfig =
+  !!oAuthConfig?.client_id && !!oAuthConfig?.client_secret && !!oAuthConfig?.redirect_uris?.length;
+
+const oAuth2Client = hasOAuthConfig
+  ? new OAuth2Client(oAuthConfig.client_id, oAuthConfig.client_secret, oAuthConfig.redirect_uris[0])
+  : null;
+
+const getOAuthClientOrRespond = (res: Response): OAuth2Client | null => {
+  if (!oAuth2Client) {
+    sendResponse(res, {
+      code: 503,
+      message: 'Google OAuth is not configured for this environment.',
+    });
+    return null;
+  }
+  return oAuth2Client;
+};
 
 const googleAuthUrl = async (req: Request, res: Response) => {
   // #swagger.tags = ['Oauth2']
-  const authorizeUrl = oAuth2Client.generateAuthUrl({
+  const client = getOAuthClientOrRespond(res);
+  if (!client) return;
+  const authorizeUrl = client.generateAuthUrl({
     access_type: 'offline',
     scope: scopes,
     //  the server should always prompt the user for consent, even if they have previously granted consent.
@@ -43,7 +58,6 @@ interface oAuthResponseData {
 
 const updateOrCreateUser = async (data: oAuthResponseData): Promise<User | Error> => {
   const { email, verified_email, name, picture } = data;
-
   try {
     const existingUser = await User.findOne({ where: { email } });
 
@@ -73,11 +87,13 @@ const updateOrCreateUser = async (data: oAuthResponseData): Promise<User | Error
 const oauthCallback = async (req: Request, res: Response) => {
   // #swagger.ignore = true
   const { code } = req.query;
+  const client = getOAuthClientOrRespond(res);
+  if (!client) return;
   try {
-    const { tokens } = await oAuth2Client.getToken(code as string);
-    oAuth2Client.setCredentials(tokens);
+    const { tokens } = await client.getToken(code as string);
+    client.setCredentials(tokens);
 
-    const { data }: { data: oAuthResponseData } = await oAuth2Client.request({
+    const { data }: { data: oAuthResponseData } = await client.request({
       url: userInfoEndpoint,
     });
     const updatedUser = await updateOrCreateUser(data);

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import { v4 as uuid } from 'uuid';
+import { randomUUID } from 'crypto';
 
 import { User } from '../models/User';
 import { sendResponse, handleAndConvertError } from '../utils/helper';
@@ -49,7 +49,7 @@ const signUp = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   const passwordHash = await bcrypt.hash(password, 10);
-  const verificationString = uuid();
+  const verificationString = randomUUID();
 
   try {
     const user = await User.findOne({ where: { email } });
@@ -136,7 +136,7 @@ const verifyEmail = async (req: Request, res: Response) => {
 const forgotPassword = async (req: Request, res: Response) => {
   // #swagger.tags = ['User']
   const { email } = req.body;
-  const verificationString = uuid();
+  const verificationString = randomUUID();
 
   try {
     const result = await User.update({ verificationString }, { where: { email } });

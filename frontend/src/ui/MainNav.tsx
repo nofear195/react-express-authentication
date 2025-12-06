@@ -1,8 +1,9 @@
 import { NavLink, type To } from "react-router-dom";
+import { ReactNode } from "react";
 
 interface Props {
   to: To;
-  children: JSX.Element;
+  children: ReactNode;
 }
 
 const StyledNavLink = function ({ to, children }: Props) {

@@ -48,18 +48,10 @@ export async function logout() {
 }
 
 export async function getCurrentUser() {
-  try {
-    const response = await api.fetchData("/user/user");
-
-    const { data, error } = response;
-    if (error !== null) throw new Error(error);
-
-    return data as Info;
-  } catch (error) {
-    console.error(error);
-
-    return new Info();
-  }
+  const response = await api.fetchData("/user/user");
+  const { data, error } = response;
+  if (error !== null) throw new Error(error);
+  return data as Info;
 }
 
 // export async function updateCurrentUser({ password, fullName, avatar }) {

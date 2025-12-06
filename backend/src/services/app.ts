@@ -3,22 +3,25 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { exit } from 'process';
 import routes from '../routes';
-import sequelize from '../services/database';
+import sequelize, { hasDatabaseConfig } from '../services/database';
 import swaggerUi from 'swagger-ui-express';
 import swaggerOutput from '../../swagger-output.json';
 import { authenticateToken } from '../utils/authenticate';
 import { handleAndConvertError } from '../utils/helper';
 
-// Initialize Sequelize
-sequelize
-  .sync({ force: false })
-  .then(() => {
-    console.log('Database synchronized');
-  })
-  .catch((error) => {
-    handleAndConvertError(error);
-    exit(1);
-  });
+if (sequelize) {
+  sequelize
+    .sync({ force: false })
+    .then(() => {
+      console.log('Database synchronized');
+    })
+    .catch((error) => {
+      handleAndConvertError(error);
+      console.warn('[database] Failed to synchronize. Continuing without a database connection.');
+    });
+} else if (!hasDatabaseConfig) {
+  console.warn('[database] Running without a configured database. API endpoints may be limited.');
+}
 
 const app = express();
 

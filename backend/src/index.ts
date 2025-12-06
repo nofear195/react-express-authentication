@@ -1,7 +1,7 @@
 import {envConfig} from "./utils/config";
 import app from "./services/app";
 
-const port = envConfig.SERVER_PORT;
+const port = envConfig.SERVER_PORT || 3000;
 
 
 // Start the Express server
