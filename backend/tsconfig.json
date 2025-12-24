@@ -4,6 +4,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "outDir": "dist",
+    "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitAny": true,
@@ -14,6 +15,6 @@
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true
   },
-  "include": ["src", "swagger-config.js"],
+  "include": ["src"],
   "exclude": ["node_modules"]
 }

@@ -2,12 +2,27 @@ import { Sequelize } from 'sequelize-typescript';
 import path from 'path';
 import { envConfig } from '../utils/config';
 
+const sanitizeValue = (value: unknown) => {
+  if (typeof value === 'string') return value.trim();
+  return value;
+};
+
+const isPlaceholder = (value: unknown) =>
+  typeof value === 'string' && value.trim().toLowerCase() === 'db host';
+
+const host = sanitizeValue(envConfig.DB_HOST);
+const port = envConfig.DB_PORT;
+const database = sanitizeValue(envConfig.DB_DATABASE);
+const username = sanitizeValue(envConfig.DB_USER);
+const password = sanitizeValue(envConfig.DB_PASSWORD);
+
 const hasDatabaseConfig = Boolean(
-  envConfig.DB_HOST &&
-    envConfig.DB_PORT &&
-    envConfig.DB_DATABASE &&
-    envConfig.DB_USER &&
-    envConfig.DB_PASSWORD,
+  host &&
+    !isPlaceholder(host) &&
+    port &&
+    database &&
+    username &&
+    password,
 );
 
 if (!hasDatabaseConfig) {
@@ -16,12 +31,12 @@ if (!hasDatabaseConfig) {
 
 const sequelize = hasDatabaseConfig
   ? new Sequelize({
-      host: envConfig.DB_HOST,
-      port: envConfig.DB_PORT,
+      host: host as string,
+      port,
       dialect: 'mysql',
-      database: envConfig.DB_DATABASE,
-      username: envConfig.DB_USER,
-      password: envConfig.DB_PASSWORD,
+      database: database as string,
+      username: username as string,
+      password: password as string,
       models: [path.join(__dirname, '../models/*.ts')],
     })
   : null;

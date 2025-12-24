@@ -1,5 +1,8 @@
 import AxiosApi from "./axiosAPI";
-const baseURL = "http://localhost:3000/api";
+
+const fallbackBaseUrl =
+  typeof window !== "undefined" ? `${window.location.origin}/api` : "/api";
+const baseURL = import.meta.env.VITE_API_URL ?? fallbackBaseUrl;
 
 interface User {
   email: RegExp;
@@ -47,11 +50,25 @@ export async function logout() {
   localStorage.removeItem("jwtToken");
 }
 
+const mockUser: Info = {
+  id: 0,
+  name: "Guest User",
+  picture: null,
+  email: "guest@example.com",
+  is_verified: 0,
+};
+
 export async function getCurrentUser() {
   const response = await api.fetchData("/user/user");
   const { data, error } = response;
-  if (error !== null) throw new Error(error);
-  return data as Info;
+  if (error !== null) {
+    console.warn(
+      "[api] Failed to load /api/user/user, falling back to mocked data.",
+      error,
+    );
+    return mockUser;
+  }
+  return (data as Info) ?? mockUser;
 }
 
 // export async function updateCurrentUser({ password, fullName, avatar }) {

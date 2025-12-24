@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 
-import { User } from '../models/User';
 import { sendResponse, handleAndConvertError } from '../utils/helper';
 import { sendVerifyEmail, sendResetPasswordEmail } from '../utils/sendEmail';
 import { signJwt, parseJwtToken, JwtPayload } from '../utils/authenticate';
+import userRepository from '../repositories/userRepository';
 
 const redirectUrl = 'http://localhost:3000';
 
@@ -15,7 +15,7 @@ const getAllUsers = async (req: Request, res: Response) => {
             "bearerAuth": []
     }] */
   try {
-    const users = await User.findAll();
+    const users = await userRepository.findAll();
     sendResponse(res, { data: users });
   } catch (error) {
     const message = handleAndConvertError(error);
@@ -33,7 +33,7 @@ const getUser = async (req: Request, res: Response) => {
     if (jwtPayload instanceof Error) throw jwtPayload;
 
     const { id } = jwtPayload;
-    const user = await User.findOne({
+    const user = await userRepository.findOne({
       where: { id },
       attributes: ['id', 'name', 'picture', 'email', 'is_verified'],
     });
@@ -52,14 +52,14 @@ const signUp = async (req: Request, res: Response) => {
   const verificationString = randomUUID();
 
   try {
-    const user = await User.findOne({ where: { email } });
+    const user = await userRepository.findOne({ where: { email } });
     if (user) throw new Error('user exists');
 
-    const result = await User.create({
+    const result = await userRepository.create({
       email,
       password: passwordHash,
       verificationString,
-    } as User);
+    });
     const { id, isVerified } = result;
 
     await sendVerifyEmail(email, redirectUrl, verificationString);
@@ -83,7 +83,7 @@ const logIn = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ where: { email } });
+    const user = await userRepository.findOne({ where: { email } });
     if (!user) throw new Error('user not found');
 
     const { id, isVerified, password: passwordHash } = user;
@@ -113,13 +113,13 @@ const verifyEmail = async (req: Request, res: Response) => {
   const { verificationString } = req.body;
 
   try {
-    const user = await User.findOne({ where: { verificationString } });
+    const user = await userRepository.findOne({ where: { verificationString } });
     if (!user) throw new Error('The email verification code is incorrect');
 
     const { id, email, isVerified } = user;
     if (isVerified) throw new Error('The email has already been verified');
 
-    const result = await User.update({ isVerified: true }, { where: { id } });
+    const result = await userRepository.update({ isVerified: true }, { where: { id } });
 
     if (result[0] === 0) throw new Error('database update user verified error');
 
@@ -139,7 +139,7 @@ const forgotPassword = async (req: Request, res: Response) => {
   const verificationString = randomUUID();
 
   try {
-    const result = await User.update({ verificationString }, { where: { email } });
+    const result = await userRepository.update({ verificationString }, { where: { email } });
     if (result[0] === 0) throw new Error('eamil not found');
 
     await sendResetPasswordEmail(email, redirectUrl, verificationString);
@@ -158,7 +158,7 @@ const resetPassword = async (req: Request, res: Response) => {
   const newPasswordHash = await bcrypt.hash(newPassword, 10);
 
   try {
-    const result = await User.update(
+    const result = await userRepository.update(
       { password: newPasswordHash },
       { where: { verificationString: passwordResetCode } },
     );
