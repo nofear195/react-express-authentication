@@ -1,13 +1,7 @@
 version: 2
 updates:
-  # Frontend (React / Vite)
+  # pnpm workspace (frontend + backend)
   - package-ecosystem: "npm"
-    directory: "/frontend"
-    schedule:
-      interval: "weekly"
-
-  # Backend (Express / Node)
-  - package-ecosystem: "npm"
-    directory: "/backend"
+    directory: "/"
     schedule:
       interval: "weekly"
